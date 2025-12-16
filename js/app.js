@@ -1,13 +1,21 @@
 // ====================== Constants =======================
-
+class Hand {
+    constructor(handNumber, cards, stand, total) {
+    this.handNumber = handNumber;
+    this.cards = cards;
+    this.stand = stand;
+    this.total = total;
+    }
+}
 
 // ====================== Variables =======================
 
 let deck = [];
 let discard = [];
-let playerHand = [];
-let dealerHand = [];
+let playerHand = new Hand(1, [], false, 0)
+let dealerHand = new Hand(1, [], false, 0)
 let cardToRemove;
+
 
 // =================== Cached Elements ====================
 
@@ -22,6 +30,78 @@ const init = () => {
   deck = fullDeck
 }
 
+handTotal = () => {
+    let handSum;
+    for (let i = 0; i < this.cards.length; i++) {
+        handSum = handSum + this.cards[i].value
+    }
+}
+
+
+
+
+const handleClickDeal = () => {
+    if (deck.length > 0) {
+        let randomIdx = Math.floor(Math.random() * deck.length)
+        let cardPicked = deck.splice(randomIdx,1)[0]
+        if (playerHand.cards.length ===  0 && dealerHand.cards.length === 0) {
+            playerHand.cards.push(cardPicked)
+        } else if (playerHand.cards.length === 1 && dealerHand.cards.length === 0) {
+            dealerHand.cards.push(cardPicked)
+        } else if (playerHand.cards.length === 1 && dealerHand.cards.length === 1) {
+            playerHand.cards.push(cardPicked)
+        } else if (playerHand.cards.length === 2 && dealerHand.cards.length === 1) {
+            dealerHand.cards.push(cardPicked)
+        } else {
+            console.log('the game is ready')
+        }
+        console.log(playerHand.cards[0], playerHand.cards[1])
+        console.log(dealerHand.cards[0], dealerHand.cards[1])
+        
+        
+        render(cardPicked.name)
+    }
+}
+const handleClickHit = () => {
+    if (deck.length > 0) {
+        let randomIdx = Math.floor(Math.random() * deck.length)
+        let cardPicked = deck.splice(randomIdx,1)[0]
+        playerHand.push(cardPicked)       
+    
+    render(cardPicked.name)
+    }
+}
+const handleClickDouble = () => {
+    if (deck.length > 0 && playerHand.length < 3) {
+        let randomIdx = Math.floor(Math.random() * deck.length)
+        let cardPicked = deck.splice(randomIdx,1)[0]
+        playerHand.push(cardPicked)       
+    // add stand variable
+    render(cardPicked.name)
+    }
+}
+const handleClickSplit = () => {
+    if (playerHand.cards[0].value === playerHand.cards[1].value) {
+        
+        let newHand = playerHand.splice(1, 1)
+        const handContainer = document.querySelectorAll('.player');
+        const newHandEl = document.createElement('div');
+        newHandEl.classList.add('player-hand1')
+        
+    if (deck.length > 0) {
+        let randomIdx = Math.floor(Math.random() * deck.length)
+        let cardPicked = deck.splice(randomIdx,1)[0]
+        playerHand.push(cardPicked)       
+    
+    render(cardPicked.name) 
+        }
+    }
+    render()
+}
+
+const handleClickStand = () =>{
+    
+}
 const render = (cardPicked) => {
     if (discard.length === 1) {  
     discardEl.classList.remove("outline")
@@ -42,71 +122,15 @@ const render = (cardPicked) => {
     handRender()
 
 }
+
 function handRender () {
-        playerHand.forEach((card, i) => {
+        playerHand.cards.forEach((card, i) => {
             playerHandEl[i].classList.add(card.name)                     
         })
-        dealerHand.forEach((card,i) => {
+        dealerHand.cards.forEach((card,i) => {
             dealerHandEl[i].classList.add(card.name)
         })
-}
-const handleClickDeal = () => {
-    if (deck.length > 0) {
-        let randomIdx = Math.floor(Math.random() * deck.length)
-        let cardPicked = deck.splice(randomIdx,1)[0]
-        if (playerHand.length ===  0 && dealerHand.length === 0) {
-            playerHand.push(cardPicked)
-        } else if (playerHand.length === 1 && dealerHand.length === 0) {
-            dealerHand.push(cardPicked)
-        } else if (playerHand.length === 1 && dealerHand.length === 1) {
-            playerHand.push(cardPicked)
-        } else if (playerHand.length === 2 && dealerHand.length === 1) {
-            dealerHand.push(cardPicked)
-        } else {
-            console.log('the game is ready')
-        }
-        console.log(playerHand[0], playerHand[1])
-        console.log(dealerHand[0], dealerHand[1])
-        
-        
-        render(cardPicked.name)
     }
-}
-const handleClickHit = () => {
-    if (deck.length > 0) {
-        let randomIdx = Math.floor(Math.random() * deck.length)
-        let cardPicked = deck.splice(randomIdx,1)[0]
-        playerHand.push(cardPicked)       
-    
-    render(cardPicked.name)
-    }
-}
-const handleClickDouble = () => {
-    if (deck.length > 0 && playerHand.length < 3) {
-        let randomIdx = Math.floor(Math.random() * deck.length)
-        let cardPicked = deck.splice(randomIdx,1)[0]
-        playerHand.push(cardPicked)       
-    
-    render(cardPicked.name)
-    }
-}
-const handleClickSplit =() => {
-    if (playerHand[0].value === playerHand[1].value)  {
-        const handContainer = document.querySelectorAll('.player');
-        const newHandEl = document.createElement('div');
-        handContainer[0].appendChild(newHandEl);
-        
-        newHandEl.appendChild('div id="player-hand-9" class="card large outline"')
-        newHandEl.appendChild('div id="player-hand-9" class="card large outline"')
-        newHandEl.appendChild('div id="player-hand-9" class="card large outline"')
-        newHandEl.appendChild('div id="player-hand-9" class="card large outline"')
-        newHandEl.appendChild('div id="player-hand-9" class="card large outline"')
-        newHandEl.appendChild('div id="player-hand-9" class="card large outline"')
-        newHandEl.appendChild('div id="player-hand-9" class="card large outline"')
-        newHandEl.appendChild('div id="player-hand-9" class="card large outline"')
-    }  
-}
-
 
 
 init ()
@@ -116,5 +140,4 @@ document.querySelector('#deal').addEventListener('click', handleClickDeal)
 document.querySelector('#hit').addEventListener('click', handleClickHit)
 document.querySelector('#double').addEventListener('click', handleClickDouble)
 document.querySelector('#split').addEventListener('click', handleClickSplit)
-
-
+document.querySelector('#stand').addEventListener('click', handleClickStand)
