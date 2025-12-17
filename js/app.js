@@ -16,8 +16,8 @@ class Hand {
 
 let deck = [];
 let discard = [];
-let playerHand = new Hand(1)
-let dealerHand = new Hand(1)
+let playerHand = new Hand(1);
+let dealerHand = new Hand(1);
 let cardToRemove;
 
 
@@ -59,52 +59,64 @@ const handleClickDeal = () => {
         } else {
             console.log('the game is ready')
         }
-        console.log(playerHand.cards[0], playerHand.cards[1])
-        console.log(dealerHand.cards[0], dealerHand.cards[1])
+        // console.log(playerHand.cards[0], playerHand.cards[1])
+        // console.log(dealerHand.cards[0], dealerHand.cards[1])
         
         
         render(cardPicked.name)
     }
 }
+
 const handleClickHit = () => {
-    if (deck.length > 0) {
-        let randomIdx = Math.floor(Math.random() * deck.length)
-        let cardPicked = deck.splice(randomIdx,1)[0]
-        playerHand.push(cardPicked)       
-    
-    render(cardPicked.name)
+    console.log(playerHand.cards)
+    console.log(`this is at the start of the handleClickHit function ${playerHand.total}`)
+    if (playerHand.total > 21) {        
+         console.log('bust')         
+    } else if (playerHand.total < 21) {
+        if (deck.length > 0 && playerHand.stand === false) {
+            let randomIdx = Math.floor(Math.random() * deck.length);
+            let cardPicked = deck.splice(randomIdx,1)[0];
+            playerHand.cards.push(cardPicked);      
+            render(cardPicked.name)                  
+        }
+    } else if (playerHand.total === 21){
+        console.log('You have 21');
+        }
+    if (playerHand.total > 21) {
+        (playerHand.cards.find (card => card.value === 11 ? card.value = 1 : null))
     }
 }
+
 const handleClickDouble = () => {
     if (deck.length > 0 && playerHand.length < 3) {
         let randomIdx = Math.floor(Math.random() * deck.length)
         let cardPicked = deck.splice(randomIdx,1)[0]
-        playerHand.push(cardPicked)       
-    // add stand variable
+        playerHand.cards.push(cardPicked)       
+        playerHand.stand = true
     render(cardPicked.name)
     }
 }
 const handleClickSplit = () => {
     if (playerHand.cards[0].value === playerHand.cards[1].value) {
         
-        let newHand = playerHand.splice(1, 1)
+        let newHand = playerHand.splice(1, 1);
         const handContainer = document.querySelectorAll('.player');
         const newHandEl = document.createElement('div');
-        newHandEl.classList.add('player-hand1')
+        newHandEl.classList.add('player-hand1');
         
     if (deck.length > 0) {
-        let randomIdx = Math.floor(Math.random() * deck.length)
-        let cardPicked = deck.splice(randomIdx,1)[0]
-        playerHand.push(cardPicked)       
+        let randomIdx = Math.floor(Math.random() * deck.length);
+        let cardPicked = deck.splice(randomIdx,1)[0];
+        playerHand.push(cardPicked);      
     
-    render(cardPicked.name) 
+    render(cardPicked.name);
         }
     }
-    render()
+    render();
 }
 
 const handleClickStand = () =>{
-    
+        
 }
 const render = (cardPicked) => {
     if (discard.length === 1) {  
@@ -124,7 +136,7 @@ const render = (cardPicked) => {
     deckEl.classList.remove("back-blue");
     };
     handRender()
-    console.log(playerHand.total)
+    // console.log(playerHand.total)
 
 }
 
