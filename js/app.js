@@ -1,19 +1,23 @@
 // ====================== Constants =======================
 class Hand {
-    constructor(handNumber, cards, stand, total) {
+    constructor(handNumber) {
     this.handNumber = handNumber;
-    this.cards = cards;
-    this.stand = stand;
-    this.total = total;
+    this.cards = [];
+    this.stand = false;
+    };
+    get total () {
+        return this.cards.reduce((acc, card) => acc + card.value, 0) 
     }
 }
+   
+
 
 // ====================== Variables =======================
 
 let deck = [];
 let discard = [];
-let playerHand = new Hand(1, [], false, 0)
-let dealerHand = new Hand(1, [], false, 0)
+let playerHand = new Hand(1)
+let dealerHand = new Hand(1)
 let cardToRemove;
 
 
@@ -30,7 +34,7 @@ const init = () => {
   deck = fullDeck
 }
 
-handTotal = () => {
+function handTotal () {
     let handSum;
     for (let i = 0; i < this.cards.length; i++) {
         handSum = handSum + this.cards[i].value
@@ -120,6 +124,7 @@ const render = (cardPicked) => {
     deckEl.classList.remove("back-blue");
     };
     handRender()
+    console.log(playerHand.total)
 
 }
 
