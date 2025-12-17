@@ -19,6 +19,7 @@ let discard = [];
 let playerHand = new Hand(1);
 let dealerHand = new Hand(1);
 let cardToRemove;
+let roundComplete = false
 
 
 // =================== Cached Elements ====================
@@ -44,7 +45,7 @@ function handTotal () {
 
 
 
-const handleClickDeal = () => {
+const handleClickDeal = () => {    
     if (deck.length > 0) {
         let randomIdx = Math.floor(Math.random() * deck.length)
         let cardPicked = deck.splice(randomIdx,1)[0]
@@ -59,8 +60,6 @@ const handleClickDeal = () => {
         } else {
             console.log('the game is ready')
         }
-        // console.log(playerHand.cards[0], playerHand.cards[1])
-        // console.log(dealerHand.cards[0], dealerHand.cards[1])
         
         
         render(cardPicked.name)
@@ -88,36 +87,76 @@ const handleClickHit = () => {
 }
 
 const handleClickDouble = () => {
-    if (deck.length > 0 && playerHand.length < 3) {
+    if (deck.length > 0 && playerHand.cards.length < 3) {
         let randomIdx = Math.floor(Math.random() * deck.length)
         let cardPicked = deck.splice(randomIdx,1)[0]
         playerHand.cards.push(cardPicked)       
-        playerHand.stand = true
     render(cardPicked.name)
+    stand ()
     }
+    
 }
 const handleClickSplit = () => {
     if (playerHand.cards[0].value === playerHand.cards[1].value) {
-        
-        let newHand = playerHand.splice(1, 1);
-        const handContainer = document.querySelectorAll('.player');
-        const newHandEl = document.createElement('div');
-        newHandEl.classList.add('player-hand1');
-        
-    if (deck.length > 0) {
-        let randomIdx = Math.floor(Math.random() * deck.length);
-        let cardPicked = deck.splice(randomIdx,1)[0];
-        playerHand.push(cardPicked);      
-    
-    render(cardPicked.name);
+        newHand2 = new Hand(2)
+        let splitCard = playerHand.cards.splice(1, 1);
+        newHand2.cards.push(splitCard)
+        console.log(playerHand.cards)        
+        console.log(newHand2.cards)
+    }        
+}
+function dealerPlay () {
+    console.log(dealerHand.total)
+    while (dealerHand.total < 17) {        
+        if (deck.length > 0) {
+            let randomIdx = Math.floor(Math.random() * deck.length)
+            let cardPicked = deck.splice(randomIdx,1)[0]
+            dealerHand.cards.push(cardPicked)
+            if (dealerHand.total > 21) {
+            (dealerHand.cards.find (card => card.value === 11 ? card.value = 1 : null))
+        }
+        render(cardPicked.name)
         }
     }
-    render();
+    if (dealerHand.total > 21) {
+        console.log ('PLAYER WINS')
+        return;
+    }
+}
+
+function stand () {
+    if (playerHand.total > 21) {
+            console.log('you lose // BUST')
+        } else if (playerHand.total <= 21) {
+            dealerPlay();
+            if (dealerHand.total > playerHand.total && dealerHand.total < 21) {
+                console.log('DEALER WINS')
+            } else if (dealerHand.total === playerHand.total){
+                console.log('push')
+            } else {
+                console.log('PLAYER WINS')
+            }
+        }
+        roundComplete = true
+        console.log(dealerHand.total)
+        console.log(playerHand.total)
 }
 
 const handleClickStand = () =>{
-        
+    stand ()        
 }
+
+const handleClickDiscard = ( ) => {
+    roundComplete = false
+    while (playerHand.cards > 0) {
+        discard.push(playerHand.cards.shift())
+    }
+    while (dealerHand.cards > 0) {
+        discard.push(dealerHand.cards.shift())
+    }
+    render()
+}
+
 const render = (cardPicked) => {
     if (discard.length === 1) {  
     discardEl.classList.remove("outline")
@@ -158,3 +197,4 @@ document.querySelector('#hit').addEventListener('click', handleClickHit)
 document.querySelector('#double').addEventListener('click', handleClickDouble)
 document.querySelector('#split').addEventListener('click', handleClickSplit)
 document.querySelector('#stand').addEventListener('click', handleClickStand)
+document.querySelector('#discard').addEventListener('click', handleClickDiscard)
