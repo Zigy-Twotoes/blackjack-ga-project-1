@@ -219,7 +219,8 @@ function dealerRender () {
     }
 }
 
-console.log(discard)
+
+
 
 
 init ()
