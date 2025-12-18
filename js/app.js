@@ -26,9 +26,6 @@ let roundComplete = false
 
 let deckEl = document.querySelector('#deck');
 let discardEl = document.querySelector('#discard');
-let playerHandEl = document.querySelectorAll('.player-hand .card');
-let dealerHandEl = document.querySelectorAll('.dealer-hand .card');
-
 
 // ====================== Functions =======================
 const init = () => {
@@ -45,30 +42,29 @@ function handTotal () {
 
 
 
-const handleClickDeal = () => {    
-    if (deck.length > 0) {
-        let randomIdx = Math.floor(Math.random() * deck.length)
-        let cardPicked = deck.splice(randomIdx,1)[0]
-        if (playerHand.cards.length ===  0 && dealerHand.cards.length === 0) {
-            playerHand.cards.push(cardPicked)
-        } else if (playerHand.cards.length === 1 && dealerHand.cards.length === 0) {
-            dealerHand.cards.push(cardPicked)
-        } else if (playerHand.cards.length === 1 && dealerHand.cards.length === 1) {
-            playerHand.cards.push(cardPicked)
-        } else if (playerHand.cards.length === 2 && dealerHand.cards.length === 1) {
-            dealerHand.cards.push(cardPicked)
-        } else {
-            console.log('the game is ready')
+const handleClickDeal = () => {  
+    console.log('button works') 
+    while (dealerHand.cards.length < 2) {
+        if (deck.length > 0) {
+            let randomIdx = Math.floor(Math.random() * deck.length)
+            let cardPicked = deck.splice(randomIdx,1)[0]
+            if (playerHand.cards.length ===  0 && dealerHand.cards.length === 0) {
+                playerHand.cards.push(cardPicked)
+            } else if (playerHand.cards.length === 1 && dealerHand.cards.length === 0) {
+                dealerHand.cards.push(cardPicked)
+            } else if (playerHand.cards.length === 1 && dealerHand.cards.length === 1) {
+                playerHand.cards.push(cardPicked)
+            } else if (playerHand.cards.length === 2 && dealerHand.cards.length === 1) {
+                dealerHand.cards.push(cardPicked)
+            } else {
+                console.log('the game is ready')
+            }
+            render(cardPicked.name)
         }
-        
-        
-        render(cardPicked.name)
     }
-}
+}   
 
 const handleClickHit = () => {
-    console.log(playerHand.cards)
-    console.log(`this is at the start of the handleClickHit function ${playerHand.total}`)
     if (playerHand.total > 21) {        
          console.log('bust')         
     } else if (playerHand.total < 21) {
@@ -90,7 +86,10 @@ const handleClickDouble = () => {
     if (deck.length > 0 && playerHand.cards.length < 3) {
         let randomIdx = Math.floor(Math.random() * deck.length)
         let cardPicked = deck.splice(randomIdx,1)[0]
-        playerHand.cards.push(cardPicked)       
+        playerHand.cards.push(cardPicked) 
+        if (playerHand.total > 21) {
+            (playerHand.cards.find (card => card.value === 11 ? card.value = 1 : null))
+        }      
     render(cardPicked.name)
     stand ()
     }
@@ -138,55 +137,65 @@ function stand () {
             }
         }
         roundComplete = true
-        console.log(dealerHand.total)
-        console.log(playerHand.total)
 }
 
 const handleClickStand = () =>{
     stand ()        
 }
 
-const handleClickDiscard = ( ) => {
+const handleClickDiscard = () => {
+    console.log('this works')
     roundComplete = false
-    while (playerHand.cards > 0) {
-        discard.push(playerHand.cards.shift())
+    while (playerHand.cards.length > 0) {
+        discard.push(playerHand.cards.pop())
     }
-    while (dealerHand.cards > 0) {
-        discard.push(dealerHand.cards.shift())
+    while (dealerHand.cards.length > 0) {
+        discard.push(dealerHand.cards.pop())
     }
+    playerHand.cards = []
+    dealerHand.cards = []
     render()
 }
 
 const render = (cardPicked) => {
     if (discard.length === 1) {  
-    discardEl.classList.remove("outline")
+        discardEl.classList.add("outline")
     };
-    if (discard.length > 1) {  
-    discardEl.classList.remove(cardToRemove)
-    };
-    cardToRemove = cardPicked;
-    discardEl.classList.add(cardPicked);
-    if (discard.length === 26) {  
-    discardEl.classList.add("shadow");
-    deckEl.classList.remove("shadow");
+    if (discard.length > 1) {
+        discardEl.classList.add('back-blue');
+    };   
+    if (discard.length >= 52) {  
+        discardEl.classList.add("shadow");
+        deckEl.classList.remove("shadow");
     }
     if (deck.length === 0) {  
-    deckEl.classList.add("outline");
-    deckEl.classList.remove("back-blue");
+        deckEl.classList.add("outline");
+        deckEl.classList.remove("back-blue");
     };
     handRender()
-    // console.log(playerHand.total)
 
 }
+function handRender() {
+    // Was helped by Glen but understand the logic
+    const playerBoard = document.querySelector('.player .player-hand');
+    const dealerBoard = document.querySelector('.dealer-hand');
+    playerBoard.innerHTML = '';
+    dealerBoard.innerHTML = '';
+    playerHand.cards.forEach((card, i) => {
+        const el = document.createElement('div');
+        el.className = `card large ${card.name}`; 
+        el.id = `player-card-${i}`;
+        playerBoard.appendChild(el);
+    });
+    dealerHand.cards.forEach((card, i) => {
+        const el = document.createElement('div');
+        el.className = `card large ${card.name}`;
+        el.id = `dealer-card-${i}`;
+        dealerBoard.appendChild(el);
+    });
+}
 
-function handRender () {
-        playerHand.cards.forEach((card, i) => {
-            playerHandEl[i].classList.add(card.name)                     
-        })
-        dealerHand.cards.forEach((card,i) => {
-            dealerHandEl[i].classList.add(card.name)
-        })
-    }
+console.log(discard)
 
 
 init ()
@@ -197,4 +206,4 @@ document.querySelector('#hit').addEventListener('click', handleClickHit)
 document.querySelector('#double').addEventListener('click', handleClickDouble)
 document.querySelector('#split').addEventListener('click', handleClickSplit)
 document.querySelector('#stand').addEventListener('click', handleClickStand)
-document.querySelector('#discard').addEventListener('click', handleClickDiscard)
+document.querySelector('#discard-btn').addEventListener('click', handleClickDiscard)
