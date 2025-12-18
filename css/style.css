@@ -4,7 +4,6 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 50vmax;
 }
 
 .container {
@@ -15,7 +14,7 @@ body {
 }
 
 .card {
-  margin: 3vh;
+  margin: .5vh;
 }
 
 .card.outline {
@@ -27,22 +26,60 @@ body {
 }
 
 .btn {
-  margin-top: 2vh;
+  margin: 2vh .3vh 2vh .3vh;
   padding: .8rem;
   border-radius: 5px;
   color: white;
   background-color: #202d7a;
   font-weight: bold;
   border: 2px solid #202d7a;
-  
+  font-family:Arial, Helvetica, sans-serif;  
+}
+.card-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .dealer-hand {
   height: 12rem;
-  width: 100vw;
+  width: auto;
+  min-width: 30rem;
   border: 2px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: .5rem;
+  border-radius: 20px;
+}
+.dealer-board {
+  display: flex;
+  justify-content: center;
+  font-size: 45px;
+  font-family:Arial, Helvetica, sans-serif;
 }
 .player {
   height: 12rem;
-  width: 100vw;
-  border: 2px solid blue
+  width: auto;
+  min-width: 30rem;
+  border: 2px solid black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: .5rem;
+  border-radius: 20px;
+}
+.player-board {
+  display: flex;
+  justify-content: center;
+  font-size: 45px;
+  font-family:Arial, Helvetica, sans-serif;
+}
+.buttons {
+  display: flex;
+  justify-content: space-around;  
+}
+.actions-board {
+  font-size: 20px;
+  font-family:Arial, Helvetica, sans-serif;
 }

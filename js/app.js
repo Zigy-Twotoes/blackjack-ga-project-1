@@ -17,6 +17,9 @@ class Hand {
 let deck = [];
 let discard = [];
 let playerHand = new Hand(1);
+let playerHand2;
+let playerHand3;
+let playerHand4;
 let dealerHand = new Hand(1);
 let cardToRemove;
 let roundComplete = false
@@ -59,7 +62,8 @@ const handleClickDeal = () => {
             } else {
                 console.log('the game is ready')
             }
-            render(cardPicked.name)
+            render()
+            dealerRender()
         }
     }
 }   
@@ -97,11 +101,11 @@ const handleClickDouble = () => {
 }
 const handleClickSplit = () => {
     if (playerHand.cards[0].value === playerHand.cards[1].value) {
-        newHand2 = new Hand(2)
+        let playerHand2 = new Hand(2)
         let splitCard = playerHand.cards.splice(1, 1);
-        newHand2.cards.push(splitCard)
+        playerHand2.cards.push(splitCard)
         console.log(playerHand.cards)        
-        console.log(newHand2.cards)
+        console.log(playerHand2.cards)
     }        
 }
 function dealerPlay () {
@@ -128,7 +132,7 @@ function stand () {
             console.log('you lose // BUST')
         } else if (playerHand.total <= 21) {
             dealerPlay();
-            if (dealerHand.total > playerHand.total && dealerHand.total < 21) {
+            if (dealerHand.total > playerHand.total && dealerHand.total <= 21) {
                 console.log('DEALER WINS')
             } else if (dealerHand.total === playerHand.total){
                 console.log('push')
@@ -137,10 +141,12 @@ function stand () {
             }
         }
         roundComplete = true
+        playerHand.stand = true
 }
 
 const handleClickStand = () =>{
-    stand ()        
+    stand () 
+    dealerRender()       
 }
 
 const handleClickDiscard = () => {
@@ -154,7 +160,9 @@ const handleClickDiscard = () => {
     }
     playerHand.cards = []
     dealerHand.cards = []
+    playerHand.stand = false
     render()
+    dealerRender()
 }
 
 const render = (cardPicked) => {
@@ -172,27 +180,43 @@ const render = (cardPicked) => {
         deckEl.classList.add("outline");
         deckEl.classList.remove("back-blue");
     };
-    handRender()
-
+    playerRender()
 }
-function handRender() {
+function playerRender() {
     // Was helped by Glen but understand the logic
-    const playerBoard = document.querySelector('.player .player-hand');
-    const dealerBoard = document.querySelector('.dealer-hand');
-    playerBoard.innerHTML = '';
-    dealerBoard.innerHTML = '';
+    const playerBoard = document.querySelector('.player .player-hand');    
+    playerBoard.innerHTML = '';    
     playerHand.cards.forEach((card, i) => {
         const el = document.createElement('div');
         el.className = `card large ${card.name}`; 
         el.id = `player-card-${i}`;
         playerBoard.appendChild(el);
-    });
-    dealerHand.cards.forEach((card, i) => {
-        const el = document.createElement('div');
-        el.className = `card large ${card.name}`;
-        el.id = `dealer-card-${i}`;
-        dealerBoard.appendChild(el);
-    });
+    });    
+}
+
+function dealerRender () {
+    const dealerBoard = document.querySelector('.dealer-hand');
+    dealerBoard.innerHTML = '';
+    if (playerHand.stand === false) {
+        dealerHand.cards.forEach((card, i) => {
+            const el = document.createElement('div');
+            el.className = `card large ${card.name}`;
+            el.id = `dealer-card-${i}`;
+            dealerBoard.appendChild(el);
+        });
+        if (dealerHand.cards.length > 0)  {  
+            let dealerEl = document.querySelector('#dealer-card-0')
+            dealerEl.className = `card large back-blue`
+        }
+    }
+    if (playerHand.stand === true) {
+        dealerHand.cards.forEach((card, i) => {
+            const el = document.createElement('div');
+            el.className = `card large ${card.name}`;
+            el.id = `dealer-card-${i}`;
+            dealerBoard.appendChild(el);
+        }); 
+    }
 }
 
 console.log(discard)
