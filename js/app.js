@@ -286,6 +286,8 @@ function messageRender () {
 const handleClickShuffle = () => {    
     deck = fullDeck.map(card => ({...card})) // assigns deck value to a map 'clone' of the entire fullDeck const (was a bug fix for the shuffle mechanic not working)
     discard = []
+    dealerHand.cards = []
+    playerHand.cards = []
     render()
     playerRender ()
     dealerRender ()
