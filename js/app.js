@@ -50,24 +50,28 @@ function handTotal () {
 
 
 const handleClickDeal = () => {  
-
-    while (dealerHand.cards.length < 2) {
-        if (deck.length > 0) {
-            let randomIdx = Math.floor(Math.random() * deck.length)
-            let cardPicked = deck.splice(randomIdx,1)[0]
-            if (playerHand.cards.length ===  0 && dealerHand.cards.length === 0) {
-                playerHand.cards.push(cardPicked)
-            } else if (playerHand.cards.length === 1 && dealerHand.cards.length === 0) {
-                dealerHand.cards.push(cardPicked)
-            } else if (playerHand.cards.length === 1 && dealerHand.cards.length === 1) {
-                playerHand.cards.push(cardPicked)
-            } else if (playerHand.cards.length === 2 && dealerHand.cards.length === 1) {
-                dealerHand.cards.push(cardPicked)
-            } else {
-                messageRender()
+    if (deck.length < 16) {
+        deckLimit()
+        messageRender()
+    } else {
+        while (dealerHand.cards.length < 2) {
+            if (deck.length > 0) {
+                let randomIdx = Math.floor(Math.random() * deck.length)
+                let cardPicked = deck.splice(randomIdx,1)[0]
+                if (playerHand.cards.length ===  0 && dealerHand.cards.length === 0) {
+                    playerHand.cards.push(cardPicked)
+                } else if (playerHand.cards.length === 1 && dealerHand.cards.length === 0) {
+                    dealerHand.cards.push(cardPicked)
+                } else if (playerHand.cards.length === 1 && dealerHand.cards.length === 1) {
+                    playerHand.cards.push(cardPicked)
+                } else if (playerHand.cards.length === 2 && dealerHand.cards.length === 1) {
+                    dealerHand.cards.push(cardPicked)
+                } else {
+                    messageRender()
+                }
+                render()
+                dealerRender()
             }
-            render()
-            dealerRender()
         }
     }
     messageRender()
@@ -113,13 +117,6 @@ const handleClickDouble = () => {
     } else {
         messageRender()
     }
-}
-const handleClickSplit = () => {
-    if (playerHand.cards[0].value === playerHand.cards[1].value) {
-        let playerHand2 = new Hand(2)
-        let splitCard = playerHand.cards.splice(1, 1);
-        playerHand2.cards.push(splitCard)
-    }        
 }
 function dealerPlay () {
     handleAce()
@@ -172,21 +169,25 @@ const handleClickStand = () =>{
 }
 
 const handleClickDiscard = () => {
-    roundComplete = false
-    while (playerHand.cards.length > 0) {
-        discard.push(playerHand.cards.pop())
+    if (roundComplete === true) {
+        roundComplete = false
+        while (playerHand.cards.length > 0) {
+            discard.push(playerHand.cards.pop())
+        }
+        while (dealerHand.cards.length > 0) {
+            discard.push(dealerHand.cards.pop())
+        }
+        playerHand.cards = []
+        dealerHand.cards = []
+        playerHand.stand = false
+        win = 0
+        render()
+        dealerRender()
+        winLossRender()
+        messageRender()
+    } else {
+        messageRender()
     }
-    while (dealerHand.cards.length > 0) {
-        discard.push(dealerHand.cards.pop())
-    }
-    playerHand.cards = []
-    dealerHand.cards = []
-    playerHand.stand = false
-    win = 0
-    render()
-    dealerRender()
-    winLossRender()
-    messageRender()
 }
 
 const render = () => {
@@ -269,8 +270,12 @@ function messageRender () {
         messageCondText.innerHTML = `Game Actions // BUST! Click Stand then discard`
     } else if (playerHand.total === 21) {
         messageCondText.innerHTML = `Game Actions // You have 21! Click Stand then discard`
+    } else if (deck.length < 16) {
+        messageCondText.innerHTML = `Game Actions // Decks have been reshuffled`
     } else if (playerHand.cards.length < 1) {
         messageCondText.innerHTML = `Game Actions // Click Deal to play`
+    } else if (roundComplete === false) {
+        messageCondText.innerHTML = `Game Actions // Do you hit or stand`
     } else if (playerHand.cards.length === 2 && dealerHand.cards.length === 2) {
         messageCondText.innerHTML = `Game Actions // Game is ready! Hit or Stand`
     } else {
@@ -278,8 +283,8 @@ function messageRender () {
     }
 
 }
-const handleClickShuffle = () => {
-    deck = fullDeck.map(card => ({...card}))
+const handleClickShuffle = () => {    
+    deck = fullDeck.map(card => ({...card})) // assigns deck value to a map 'clone' of the entire fullDeck const (was a bug fix for the shuffle mechanic not working)
     discard = []
     render()
     playerRender ()
@@ -296,6 +301,12 @@ function handleAce () {
     }
 }
 
+function deckLimit () {
+    if (deck.length < 16) {
+        handleClickShuffle()
+    }
+}
+
 
 init ()
 
@@ -304,7 +315,6 @@ init ()
 document.querySelector('#deal').addEventListener('click', handleClickDeal)
 document.querySelector('#hit').addEventListener('click', handleClickHit)
 document.querySelector('#double').addEventListener('click', handleClickDouble)
-document.querySelector('#split').addEventListener('click', handleClickSplit)
 document.querySelector('#stand').addEventListener('click', handleClickStand)
 document.querySelector('#discard-btn').addEventListener('click', handleClickDiscard)
 document.querySelector('#shuffle').addEventListener('click', handleClickShuffle)
