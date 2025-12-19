@@ -23,6 +23,7 @@ let playerHand4;
 let dealerHand = new Hand(1);
 let cardToRemove;
 let roundComplete = false
+let win = 0
 
 
 // =================== Cached Elements ====================
@@ -32,7 +33,10 @@ let discardEl = document.querySelector('#discard');
 
 // ====================== Functions =======================
 const init = () => {
-  deck = fullDeck
+    deck = fullDeck.map(card => ({...card}))
+    playerHand.cards = []
+    dealerHand.cards = []
+    discard = []
 }
 
 function handTotal () {
@@ -46,7 +50,7 @@ function handTotal () {
 
 
 const handleClickDeal = () => {  
-    console.log('button works') 
+
     while (dealerHand.cards.length < 2) {
         if (deck.length > 0) {
             let randomIdx = Math.floor(Math.random() * deck.length)
@@ -60,56 +64,65 @@ const handleClickDeal = () => {
             } else if (playerHand.cards.length === 2 && dealerHand.cards.length === 1) {
                 dealerHand.cards.push(cardPicked)
             } else {
-                console.log('the game is ready')
+                messageRender()
             }
             render()
             dealerRender()
         }
     }
+    messageRender()
 }   
 
 const handleClickHit = () => {
-    if (playerHand.total > 21) {        
-         console.log('bust')         
-    } else if (playerHand.total < 21) {
-        if (deck.length > 0 && playerHand.stand === false) {
-            let randomIdx = Math.floor(Math.random() * deck.length);
-            let cardPicked = deck.splice(randomIdx,1)[0];
-            playerHand.cards.push(cardPicked);      
-            render(cardPicked.name)                  
+    if (playerHand.cards.length !== 0){
+        handleAce()
+        if (playerHand.total > 21) {        
+             messageRender()
+             win = 1        
+        } else if (playerHand.total < 21) {
+            if (deck.length > 0 && playerHand.stand === false) {
+                let randomIdx = Math.floor(Math.random() * deck.length);
+                let cardPicked = deck.splice(randomIdx,1)[0];
+                playerHand.cards.push(cardPicked);      
+                render(cardPicked.name)                  
+            }
+        } else if (playerHand.total === 21){
+            messageRender()
+            }
+        if (playerHand.total > 21) {
+            (playerHand.cards.find (card => card.value === 11 ? card.value = 1 :    null))
         }
-    } else if (playerHand.total === 21){
-        console.log('You have 21');
-        }
-    if (playerHand.total > 21) {
-        (playerHand.cards.find (card => card.value === 11 ? card.value = 1 : null))
+    } else {
+        messageRender()
     }
 }
 
 const handleClickDouble = () => {
-    if (deck.length > 0 && playerHand.cards.length < 3) {
-        let randomIdx = Math.floor(Math.random() * deck.length)
-        let cardPicked = deck.splice(randomIdx,1)[0]
-        playerHand.cards.push(cardPicked) 
-        if (playerHand.total > 21) {
-            (playerHand.cards.find (card => card.value === 11 ? card.value = 1 : null))
-        }      
-    render(cardPicked.name)
-    stand ()
+    if (playerHand.cards.length !== 0) {
+        handleAce()
+        if (deck.length > 0 && playerHand.cards.length < 3) {
+            let randomIdx = Math.floor(Math.random() * deck.length)
+            let cardPicked = deck.splice(randomIdx,1)[0]
+            playerHand.cards.push(cardPicked) 
+            if (playerHand.total > 21) {
+                (playerHand.cards.find (card => card.value === 11 ? card.value = 1  : null))
+            }           
+        render(cardPicked.name)
+        stand()
+        } 
+    } else {
+        messageRender()
     }
-    
 }
 const handleClickSplit = () => {
     if (playerHand.cards[0].value === playerHand.cards[1].value) {
         let playerHand2 = new Hand(2)
         let splitCard = playerHand.cards.splice(1, 1);
         playerHand2.cards.push(splitCard)
-        console.log(playerHand.cards)        
-        console.log(playerHand2.cards)
     }        
 }
 function dealerPlay () {
-    console.log(dealerHand.total)
+    handleAce()
     while (dealerHand.total < 17) {        
         if (deck.length > 0) {
             let randomIdx = Math.floor(Math.random() * deck.length)
@@ -122,35 +135,43 @@ function dealerPlay () {
         }
     }
     if (dealerHand.total > 21) {
-        console.log ('PLAYER WINS')
+        win = 2
+        winLossRender()
         return;
     }
 }
 
 function stand () {
-    if (playerHand.total > 21) {
-            console.log('you lose // BUST')
+    if (playerHand.cards.length !== 0){
+        if (playerHand.total > 21) {
+            win = 1
+            winLossRender()
         } else if (playerHand.total <= 21) {
             dealerPlay();
-            if (dealerHand.total > playerHand.total && dealerHand.total <= 21) {
-                console.log('DEALER WINS')
-            } else if (dealerHand.total === playerHand.total){
-                console.log('push')
+            if (dealerHand.total > playerHand.total && dealerHand.total <= 21) {                
+                win = 1
+                winLossRender()
+            } else if (dealerHand.total === playerHand.total){                    
+                    win = 3
+                    winLossRender()
             } else {
-                console.log('PLAYER WINS')
+                    win = 2
+                    winLossRender()
             }
         }
         roundComplete = true
         playerHand.stand = true
+        dealerRender()
+    } else {
+        messageRender()
+    }
 }
 
 const handleClickStand = () =>{
-    stand () 
-    dealerRender()       
+    stand ()      
 }
 
 const handleClickDiscard = () => {
-    console.log('this works')
     roundComplete = false
     while (playerHand.cards.length > 0) {
         discard.push(playerHand.cards.pop())
@@ -161,14 +182,17 @@ const handleClickDiscard = () => {
     playerHand.cards = []
     dealerHand.cards = []
     playerHand.stand = false
+    win = 0
     render()
     dealerRender()
+    winLossRender()
+    messageRender()
 }
 
-const render = (cardPicked) => {
-    if (discard.length === 1) {  
-        discardEl.classList.add("outline")
-    };
+const render = () => {
+    if (discard.length === 0) {
+        discardEl.classList.remove('back-blue')
+    }
     if (discard.length > 1) {
         discardEl.classList.add('back-blue');
     };   
@@ -218,12 +242,63 @@ function dealerRender () {
         }); 
     }
 }
+function winLossRender () {
+    const dealerCondText = document.querySelector('#dealer-text')
+    const playerCondText = document.querySelector('#player-text')
+    if (win === 0) {
+        dealerCondText.innerHTML = 'Dealer'
+        playerCondText.innerHTML = 'Player' 
+    }
+    if (win === 1) {
+        dealerCondText.innerHTML = 'Dealer: Wins'
+        playerCondText.innerHTML = 'Player: Lose'        
+    }
+    if (win === 2) {
+        dealerCondText.innerHTML = 'Dealer: Lose'
+        playerCondText.innerHTML = 'Player: Win'
+    }
+    if (win === 3) {
+        dealerCondText.innerHTML = 'Dealer: Push'
+        playerCondText.innerHTML = 'Player: Push'       
+    }
 
+}
+function messageRender () {
+    const messageCondText = document.querySelector('.actions-board')
+    if (playerHand.total > 21) {
+        messageCondText.innerHTML = `Game Actions // BUST! Click Stand then discard`
+    } else if (playerHand.total === 21) {
+        messageCondText.innerHTML = `Game Actions // You have 21! Click Stand then discard`
+    } else if (playerHand.cards.length < 1) {
+        messageCondText.innerHTML = `Game Actions // Click Deal to play`
+    } else if (playerHand.cards.length === 2 && dealerHand.cards.length === 2) {
+        messageCondText.innerHTML = `Game Actions // Game is ready! Hit or Stand`
+    } else {
+        messageCondText.innerHTML = `Game Actions`
+    }
 
+}
+const handleClickShuffle = () => {
+    deck = fullDeck.map(card => ({...card}))
+    discard = []
+    render()
+    playerRender ()
+    dealerRender ()
+}
 
+function handleAce () {
+    if (playerHand.cards[0].value === 11 && playerHand.cards[1].value === 11) {
+        playerHand.cards[0].value = 1
+    } else if (dealerHand.cards[0].value === 11 && dealerHand.cards[1].value === 11) {
+        dealerHand.cards[0].value = 1
+    } else {
+        return;
+    }
+}
 
 
 init ()
+
 // =================== Event Listeners ====================
 
 document.querySelector('#deal').addEventListener('click', handleClickDeal)
@@ -232,3 +307,4 @@ document.querySelector('#double').addEventListener('click', handleClickDouble)
 document.querySelector('#split').addEventListener('click', handleClickSplit)
 document.querySelector('#stand').addEventListener('click', handleClickStand)
 document.querySelector('#discard-btn').addEventListener('click', handleClickDiscard)
+document.querySelector('#shuffle').addEventListener('click', handleClickShuffle)

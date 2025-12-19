@@ -1,4 +1,4 @@
-let fullDeck = [
+const fullDeck = [
     {
         name: "dA",
         value: 11,

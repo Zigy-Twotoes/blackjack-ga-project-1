@@ -9,45 +9,56 @@
 	<link rel="stylesheet" href="./css/style.css">
     <script defer src="./js/data.js"></script>
 	<script defer src="./js/app.js"></script>    
-	<title>Blackjack</title>
+	<title>Basic Blackjack</title>
 </head>
-
 <body>
-	<div class="card-display">
-        <div class="container">
-	    	<div id="discard" class="card large outline"></div>
-	    	<div id="deck" class="card large back-blue shadow"></div>            
-	    </div>
-        <div class="buttons">
-            <button id="Shuffle" class="btn">Shuffle</button>
-        </div>
-        <div class="dealer-board">
-            Dealer
-        </div>
-        <div class="dealer-hand">
-        </div>
-        <div class="player-board">
-            Player
-        </div>
-        <div class="player">
-            <div class="player-hand">
-            </div>
+    <h1 id="title-header" class ="info-page">
+        Basic Blackjack
+    </h1>
+    <div id="rules-board">
+        <div class ="info-page">
+            <p class ="info-page">
+                <div class="subject">
+                    Card Values
+                </div>
+                <ul class ="info-page">
+                    <li class ="info-page"><b>Number Cards (2–10):</b> Count as     their face value.</li>
+                    <li class ="info-page"><b>Face Cards (Jack, Queen, King):</b>   Each counts as 10.</li>
+                        <li class ="info-page"><b>Aces:</b> Can count as either 1   or    11, whichever benefits the hand more.</li>
+                </ul>
+            </p>
+            <p class ="info-page">
+                <div class="subject">
+                    Standard Gameplay Flow
+                    </div>
+                <ul class ="info-page">
+                    <li class ="info-page"><b>Initial Deal:</b> Every player and    the dealer receive two cards. Most often, the dealer has one   card face up (upcard) and one card face down (hole card).</li>
+                    <li class ="info-page"><b>Natural (Blackjack):</b> If your  first two cards are an Ace and a 10-value card, you have a   "Blackjack" (natural 21).</li>
+                    <li class ="info-page"><b>Player Decisions:</b> Starting from   the dealer's left, you choose one of two primary actions:</li>
+                    <ul class ="info-page">
+                        <li class ="info-page"><b>Hit:</b> Take another card to     increase your total. You can hit as many times as you like  until you reach 21 or "bust".</li>
+                        <li class ="info-page"><b>Stand:</b> Keep your current  hand and end your turn.</li>
+                    </ul>
+                    <li class ="info-page"><b>Busting:</b> If your hand total   exceeds 21, you "bust" and lose immediately, regardless of the    dealer's hand. </li>
+                </ul>
+            </p>
+            <p class ="info-page"> 
+                <div class="subject">
+                    Dealer’s Fixed Rules
+                </div>
+                <ul class ="info-page">
+                    <li class ="info-page"><b>Must Hit:</b> The dealer must hit if  their hand total is 16 or lower.</li>
+                    <li class ="info-page"><b>Must Stand:</b> The dealer must   stand once their total is 17 or higher.</li>
+                    <li class ="info-page"><b>Win:</b> You win if your total is     higher than the dealer's without going over 21, or if the   dealer busts and you did not.</li>
+                    <li class ="info-page"><b>Loss:</b> You lose if your total is   lower than the dealer's, or if you bust.</li>
+                    <li class ="info-page"><b>Push (Tie):</b> If your total and     the dealer's total are the same, it is a "push" (no winner or   loser).</li>
+                </ul>
+            </p>
         </div>
     </div>
-    <div class="actions-board">
-        Game Actions
+    <div id=""class ="info-page">
+        <button id="play-button" class="btn" onclick="window.location.href='./game.html'">Let's Play</button>
     </div>
-    <div class="buttons">        
-        <button id="deal" class="btn">Deal</button>
-        <button id="hit" class="btn">Hit</button>
-        <button id="double" class="btn">Double</button>
-        <button id="split" class="btn">Split</button>
-        <button id="stand" class="btn">Stand</button>
-        <button id="discard-btn" class="btn">Discard</button>
-    </div>
-
-
-
+    
 </body>
-
 </html>
